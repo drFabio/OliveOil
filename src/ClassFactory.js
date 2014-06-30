@@ -1,4 +1,9 @@
- /**
+
+var Class = require('class.extend');
+var util=require('util');
+var fs=require('fs');
+module.exports=function(){
+	 /**
  * This class handles the initialization of several components, as well as path mapping, inheritances and namespace colisions
  * It's serve as a common library for object,classes and paths lookup
  * @type {Object}
@@ -41,7 +46,7 @@ var classFactory={
 	loadClass:function(name){
 		var classPojo=this.getClassFileContents(name);
 		if(this.setClassFromPojo(name,classPojo)){
-			return this.classMap[name];
+			return true;
 		}
 		throw new Error('Was not able to load the class '+name+' on the path '+this.classFileMap[name]);
 	},
@@ -55,7 +60,9 @@ var classFactory={
 		//Getting the var_args
 	    var params = Array.prototype.slice.call(arguments, 1);
 		if(!this.isClassSet(name)){
-			throw new Error('The class "'+name+'" is not set');
+			if(!this.loadClass(name)){
+				throw new Error('The class "'+name+'" is not set');
+			}
 		}
 		var DesiredClass=this.getClass(name);
 		//Needed for us to apply the constructor
@@ -201,10 +208,6 @@ var classFactory={
 		this.objectMap[name]=object;
 	}
 };
-var Class = require('class.extend');
-var util=require('util');
-var fs=require('fs');
-module.exports=function(){
 	return	Class.extend(classFactory);
 }
 

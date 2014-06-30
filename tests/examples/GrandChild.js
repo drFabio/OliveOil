@@ -7,6 +7,6 @@ module.exports={
 		this.email=email;
 	},
 	toString:function(){
-		this._super()+'  and my email is '+this.email;
-
+		return this._super()+'  and my email is '+this.email;
+	}
 }

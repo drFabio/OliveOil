@@ -56,6 +56,22 @@ describe('Factory methodes',function(){
 		expect(obj.foo).not.to.be.empty;
 
 	});
+	it('NonSingleton objects should not be influenced by each other',function(){
+		var pojoData={
+			'foo':'bar',
+			'bar':'baz',
+			init:function(){
+
+			}
+		};
+		var ret=classFactory.setClassFromPojo('pojoNonSingletonClass',pojoData);
+		var objA=classFactory.createObject('pojoClass');
+		expect(objA.foo).to.equal('bar');
+		objA.foo='bar2';
+		var objB=classFactory.createObject('pojoClass');
+		expect(objB.foo).to.equal('bar');
+
+	})
 	it('Should be able to get a previously set class',function(){
 		var operatorPOJO=classFactory.getClassFileContents('root.math.AbstractOperator');
 		classFactory.setClassFromPojo('root.math.AbstractOperator',operatorPOJO);
@@ -122,7 +138,6 @@ describe('Object inheritance',function(){
 
 	before(function(){
 		classFactory=new ClassFactory();
-		console.log(classFactory.namespaceDirMap);
 		expect(classFactory.setNamespaceDir('root',exampleDir)).to.be.true;
 		expect(classFactory.setNamespaceDir('root.math',exampleDir+'modules/math')).to.be.true;
 	});
@@ -140,9 +155,10 @@ describe('Object inheritance',function(){
 		expect(grandChild).to.exist;
 		expect(grandChild.name).to.equal('grandChildName');
 		expect(grandChild.surName).to.equal('surName');
-
 		expect(grandChild.email).to.equal('email@email.com');
 
 	});
-	it('Should be able to load a parent even if the parent it\'s not yet loaded');
+	it('Should be able to load a parent even if the parent isn\'t  loaded yet',function(){
+
+	});
 });

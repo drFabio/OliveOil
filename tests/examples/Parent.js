@@ -6,6 +6,6 @@ module.exports={
 
 	},
 	toString:function(){
-		'Hello! My name is '+this.name;
+		return 'Hello! My name is '+this.name;
 	}
 }

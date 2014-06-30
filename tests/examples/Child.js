@@ -7,7 +7,7 @@ module.exports={
 		this.surName=surName;
 	},
 	toString:function(){
-		this._super()+' and my surName is  '+this.surName;
+		return this._super()+' and my surName is  '+this.surName;
 	},
 	doChildThing:function(){
 
