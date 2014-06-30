@@ -1,5 +1,3 @@
-var Class = require('class.extend');
-var util=require('util');
  /**
  * This class handles the initialization of several components, as well as path mapping, inheritances and namespace colisions
  * It's serve as a common library for object,classes and paths lookup
@@ -11,7 +9,7 @@ var classFactory={
 	classMap:{
 
 	},
-	//A map of classes to it's class path , it is deleted if the class is loaded in our lazy initialization approach to some classes
+	//A map of classes to it's class path
 	classFileMap:{
 
 	},
@@ -32,21 +30,28 @@ var classFactory={
 		if(this.isClassSet(name)){
 			return this.classMap[name];
 		}
-		if(!this.isClassFileSet(name)){
-			throw new Error('The class '+name+' doesn\'t have a path or is not set ');
-		}
-		if(this.setClassFromPojo(name,require(this.classFileMap[name]))){
+		if(this.loadClass(name)){
 			return this.classMap[name];
 		}
 		else{
-			throw new Error('Was not able to load the class '+name+' on the path '+this.classFileMap[name]);
+			throw new Error('Was not able to load the class '+name);
 		}
 		
+	},
+	loadClass:function(name){
+		var classPojo=this.getClassFileContents(name);
+		if(this.setClassFromPojo(name,classPojo)){
+			return this.classMap[name];
+		}
+		throw new Error('Was not able to load the class '+name+' on the path '+this.classFileMap[name]);
+	},
+	isObjectSet:function(name){
+		return !!this.objectMap[name];
 	},
 	isClassSet:function(name){
 		return !!this.classMap[name];
 	},
-	getObject:function(name, var_args){
+	createObject:function(name, var_args){
 		//Getting the var_args
 	    var params = Array.prototype.slice.call(arguments, 1);
 		if(!this.isClassSet(name)){
@@ -59,33 +64,56 @@ var classFactory={
 		result= DesiredClass.apply(object, params);
 		if (typeof result === 'object') {
 			return result;
-		} else {
-			return object;
 		}
+		return object;
+		
 
 		
 	},
 	getClassFile:function(name){
 		return this.classFileMap[name];
 	},
-	getClassFileContents:function(name){
-		if(this.isClassFileSet(name)){
-			return require(this.classFileMap[name]);
+	_getFile:function(path){
+		if(path.indexOf('.js')!=path.length-3){
+			path+='.js'
 		}
-		var namespaceAndName=this.getNamespaceAndNameFromPath(name);
-		var namespace=namespaceAndName['namespace'];
-		var className=namespaceAndName['className'];
-		if(!this.isNamespaceSet(namespace)){
-			throw new Error('The namespace '+namespace+' is not set');
+		if(!fs.existsSync(path)){
+			throw new Error('the path '+path+' does not exists');
+		}
+		return require(path);
+	},
+	getClassFileContents:function(name){
+		if(!this.isClassFileSet(name)){
+			var namespaceAndName=this.getNamespaceAndNameFromPath(name);
+			var namespace=namespaceAndName['namespace'];
+			var className=namespaceAndName['className'];
+			if(namespace && !this.isNamespaceSet(namespace)){
+				throw new Error('The namespace '+namespace+' is not set');
+			}
+			this.setClassFileByNamespace(namespace,className);
+		}
+	
+
+		return this._getFile(this.classFileMap[name]);
+
+	},
+	
+	setClassFileByNamespace:function(namespace,className){
+		var fullName=namespace+'.'+className;
+		if(this.isClassFileSet(fullName)){
+			throw new Error('The class '+className+' on the namespace '+namespace+' is already mapped');
 		}
 		var path=this.getNamespaceDir(namespace)+'/'+className;
-		return require(path);
-
+		this.classFileMap[fullName]=path;
+		return true;
 	},
 	getNamespaceAndNameFromPath:function(name){
 		var pos=name.lastIndexOf('.');
 		if(pos==-1){
-			throw new Error(name+' is not a valid namespace');
+			return {
+				'namespace':false,
+				'className':name
+			}
 		}
 		return {
 			'namespace':name.substr(0,pos),
@@ -108,8 +136,12 @@ var classFactory={
 		return name.substr(pos+1);
 
 	},
-	getSingletonObject:function(name,params,cb){
-
+	getSingletonObject:function(name,var_args){
+		if(this.isObjectSet(name)){
+			return this.objectMap[name];
+		}
+		this.objectMap[name]=this.createObject.apply(this,arguments);
+		return this.objectMap[name];
 	},
 	/**
 	 * Sets a class on the given namespace to be the class object
@@ -163,25 +195,16 @@ var classFactory={
 		return true;
 	},
 	setObject:function(name,object){
-
-	},
-	/**
-	 * Loads a class
-	 * @param  {[type]} name [description]
-	 * @param  {String} path (optional) if path is not given a path wull be looked on ClassFileMap
-	 * @return {[type]}      [description]
-	 */
-	_loadClass:function(name,path){
-
-	},
-	/**
-	 * Sets an object on the given namespace 
-	 * @param {[type]} name [description]
-	 * @param {[type]} obj  [description]
-	 */
-	_setObject:function(name,obj){
-
+		if(this.isObjectSet(name)){
+			throw new Error('The object '+name+' is already set');
+		}
+		this.objectMap[name]=object;
 	}
 };
-module.exports=Class.extend(classFactory);
+var Class = require('class.extend');
+var util=require('util');
+var fs=require('fs');
+module.exports=function(){
+	return	Class.extend(classFactory);
+}
 

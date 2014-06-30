@@ -1,0 +1,32 @@
+{
+  "name": "olive",
+  "version": "0.0.0",
+  "description": "A namespace handler,class factory and inheritance handler",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests/ClassFactory.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drFabio/Olive.git"
+  },
+  "keywords": [
+    "Class",
+    "Factory",
+    "Namespaces",
+    "Inheritance"
+  ],
+   "dependencies": {
+        "chai":"*",
+        "class.extend":"*"
+  },
+  "author": "Fabio Oliveira Costa <fabio@dexus.com.br>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/drFabio/Olive/issues"
+  },
+  "homepage": "https://github.com/drFabio/Olive"
+}
