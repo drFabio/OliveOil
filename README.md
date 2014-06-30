@@ -1,0 +1,1 @@
+Olive handles namespaces,class creation and inheritance
