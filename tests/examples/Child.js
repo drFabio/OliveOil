@@ -1,5 +1,5 @@
 module.exports={
-	parent:'root.Parent',
+	parent:'Parent',
 	surName:null,
 	generation:2,
 	init:function(name,surName){

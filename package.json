@@ -24,7 +24,7 @@
         "class.extend":"*"
   },
   "author": "Fabio Oliveira Costa <fabio@dexus.com.br>",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/drFabio/Olive/issues"
   },

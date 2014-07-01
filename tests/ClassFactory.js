@@ -1,3 +1,26 @@
+/*The MIT License (MIT)
+
+Copyright (c) 2014 Fabio Oliveira Costa
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 /**
  * Suite of tests for the ginger class factory
  * @todo  Move the tests to another place
@@ -11,34 +34,34 @@ var exampleDir=__dirname+'/examples/';
 describe('Factory methodes',function(){
 	var classFactory;
 	before(function(){
-		classFactory=new ClassFactory();
+		classFactory=new ClassFactory(exampleDir);
 	});
 	it('Should be able to set a namespace directory',function(){
-		expect(classFactory.setNamespaceDir('root',exampleDir)).to.be.true;
+		expect(classFactory.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
+
 	it('Should be able to set a file path for a class',function(){
-		expect(classFactory.setClassFile('root.Parent',exampleDir+'/Parent')).to.be.true;
+		expect(classFactory.setClassFile('Parent',exampleDir+'/Parent')).to.be.true;
 	});
 	it('Should be able to get a class file path',function(){
-		var path=classFactory.getClassFile('root.Parent');
+		var path=classFactory.getClassFile('Parent');
 		expect(path).to.not.be.empty;
 	});
 	it('Should be able to create a class from a previously set file path',function(){
-		expect(classFactory.getClass('root.Parent')).to.not.be.empty;
+		expect(classFactory.getClass('Parent')).to.not.be.empty;
 
 	});
 	it('Should be able to create a object from a previously loaded class',function(){
-		var parentObj=classFactory.createObject('root.Parent','nameOfAParent');
+		var parentObj=classFactory.createObject('Parent','nameOfAParent');
 		expect(parentObj).to.not.be.empty;
 	});
 	it('Should be able to get the file contents from a already set classFile',function(){
-		var parentData=classFactory.getClassFileContents('root.Parent');
+		var parentData=classFactory.getClassFileContents('Parent');
 		expect(parentData).to.not.be.empty;
 
 	});
 	it('Should be able to get the file contents from not set classFile with a set namespace',function(){
-		expect(classFactory.setNamespaceDir('root.math',exampleDir+'modules/math')).to.be.true;
-		var operatorData=classFactory.getClassFileContents('root.math.AbstractOperator');
+		var operatorData=classFactory.getClassFileContents('math.AbstractOperator');
 		expect(operatorData).to.not.be.empty;
 	});
 	
@@ -73,28 +96,18 @@ describe('Factory methodes',function(){
 
 	})
 	it('Should be able to get a previously set class',function(){
-		var operatorPOJO=classFactory.getClassFileContents('root.math.AbstractOperator');
-		classFactory.setClassFromPojo('root.math.AbstractOperator',operatorPOJO);
-		operatorClass=classFactory.getClass('root.math.AbstractOperator');
+		var operatorPOJO=classFactory.getClassFileContents('math.AbstractOperator');
+		classFactory.setClassFromPojo('math.AbstractOperator',operatorPOJO);
+		operatorClass=classFactory.getClass('math.AbstractOperator');
 		expect(operatorClass).to.not.be.empty;
 
 	});
-	it('Should be able to manually create a class within a existing namespace',function(){
-		var rootMathPOJO={
-			'foo':'bar',
-			'bar':'baz',
-			init:function(){
 
-			}
-		};
-		var ret=classFactory.setClassFromPojo('root.pojoClass',rootMathPOJO);
-		expect(ret).to.be.true;
-	});
 	it('Should be able to create singleton Object',function(){
 		var comparisonValue='foo2';
-		var obj=classFactory.getSingletonObject('root.pojoClass');
+		var obj=classFactory.getSingletonObject('pojoClass');
 		obj.foo=comparisonValue;
-		var anotherObj=classFactory.getSingletonObject('root.pojoClass');
+		var anotherObj=classFactory.getSingletonObject('pojoClass');
 		expect(anotherObj.foo).to.equal(comparisonValue);
 	});
 	it('Should fail if you try to overwrite a namespace',function(){
@@ -137,21 +150,20 @@ describe('Object inheritance',function(){
 	var ClassFactory=require(__dirname+'/../src/ClassFactory')();
 
 	before(function(){
-		classFactory=new ClassFactory();
-		expect(classFactory.setNamespaceDir('root',exampleDir)).to.be.true;
-		expect(classFactory.setNamespaceDir('root.math',exampleDir+'modules/math')).to.be.true;
+		classFactory=new ClassFactory(exampleDir);
+		expect(classFactory.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
 	it('Should be able to create a object that inherits another loaded class',function(){
-		var load=classFactory.loadClass('root.Parent');
+		var load=classFactory.loadClass('Parent');
 		expect(load).to.be.true;
-		var child=classFactory.createObject('root.Child','childName','surName');
+		var child=classFactory.createObject('Child','childName','surName');
 		expect(child).to.exist;
 		expect(child.name).to.equal('childName');
 		expect(child.surName).to.equal('surName');
 
 	});
 	it('Should be able to create a grandChild  ',function(){
-		var grandChild=classFactory.createObject('root.GrandChild','grandChildName','surName','email@email.com');
+		var grandChild=classFactory.createObject('GrandChild','grandChildName','surName','email@email.com');
 		expect(grandChild).to.exist;
 		expect(grandChild.name).to.equal('grandChildName');
 		expect(grandChild.surName).to.equal('surName');
