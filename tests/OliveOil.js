@@ -29,39 +29,39 @@ var chai=require('chai');
 chai.config.includeStack =true;
 var expect=chai.expect;
 var should = chai.should();
-var ClassFactory=require(__dirname+'/../src/ClassFactory')();
+var OliveOil=require(__dirname+'/../src/OliveOil')();
 var exampleDir=__dirname+'/examples/';
 describe('Factory methodes',function(){
-	var classFactory;
+	var oliveOil;
 	before(function(){
-		classFactory=new ClassFactory(exampleDir);
+		oliveOil=new OliveOil(exampleDir);
 	});
 	it('Should be able to set a namespace directory',function(){
-		expect(classFactory.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
+		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
 
 	it('Should be able to set a file path for a class',function(){
-		expect(classFactory.setClassFile('Parent',exampleDir+'/Parent')).to.be.true;
+		expect(oliveOil.setClassFile('Parent',exampleDir+'/Parent')).to.be.true;
 	});
 	it('Should be able to get a class file path',function(){
-		var path=classFactory.getClassFile('Parent');
+		var path=oliveOil.getClassFile('Parent');
 		expect(path).to.not.be.empty;
 	});
 	it('Should be able to create a class from a previously set file path',function(){
-		expect(classFactory.getClass('Parent')).to.not.be.empty;
+		expect(oliveOil.getClass('Parent')).to.not.be.empty;
 
 	});
 	it('Should be able to create a object from a previously loaded class',function(){
-		var parentObj=classFactory.createObject('Parent','nameOfAParent');
+		var parentObj=oliveOil.createObject('Parent','nameOfAParent');
 		expect(parentObj).to.not.be.empty;
 	});
 	it('Should be able to get the file contents from a already set classFile',function(){
-		var parentData=classFactory.getClassFileContents('Parent');
+		var parentData=oliveOil.getClassFileContents('Parent');
 		expect(parentData).to.not.be.empty;
 
 	});
 	it('Should be able to get the file contents from not set classFile with a set namespace',function(){
-		var operatorData=classFactory.getClassFileContents('math.AbstractOperator');
+		var operatorData=oliveOil.getClassFileContents('math.AbstractOperator');
 		expect(operatorData).to.not.be.empty;
 	});
 	
@@ -73,9 +73,9 @@ describe('Factory methodes',function(){
 
 			}
 		};
-		var ret=classFactory.setClassFromPojo('pojoClass',pojoData);
+		var ret=oliveOil.setClassFromPojo('pojoClass',pojoData);
 		expect(ret).to.be.true;
-		var obj=classFactory.createObject('pojoClass');
+		var obj=oliveOil.createObject('pojoClass');
 		expect(obj.foo).not.to.be.empty;
 
 	});
@@ -87,33 +87,33 @@ describe('Factory methodes',function(){
 
 			}
 		};
-		var ret=classFactory.setClassFromPojo('pojoNonSingletonClass',pojoData);
-		var objA=classFactory.createObject('pojoClass');
+		var ret=oliveOil.setClassFromPojo('pojoNonSingletonClass',pojoData);
+		var objA=oliveOil.createObject('pojoClass');
 		expect(objA.foo).to.equal('bar');
 		objA.foo='bar2';
-		var objB=classFactory.createObject('pojoClass');
+		var objB=oliveOil.createObject('pojoClass');
 		expect(objB.foo).to.equal('bar');
 
 	})
 	it('Should be able to get a previously set class',function(){
-		var operatorPOJO=classFactory.getClassFileContents('math.AbstractOperator');
-		classFactory.setClassFromPojo('math.AbstractOperator',operatorPOJO);
-		operatorClass=classFactory.getClass('math.AbstractOperator');
+		var operatorPOJO=oliveOil.getClassFileContents('math.AbstractOperator');
+		oliveOil.setClassFromPojo('math.AbstractOperator',operatorPOJO);
+		operatorClass=oliveOil.getClass('math.AbstractOperator');
 		expect(operatorClass).to.not.be.empty;
 
 	});
 
 	it('Should be able to create singleton Object',function(){
 		var comparisonValue='foo2';
-		var obj=classFactory.getSingletonObject('pojoClass');
+		var obj=oliveOil.getSingletonObject('pojoClass');
 		obj.foo=comparisonValue;
-		var anotherObj=classFactory.getSingletonObject('pojoClass');
+		var anotherObj=oliveOil.getSingletonObject('pojoClass');
 		expect(anotherObj.foo).to.equal(comparisonValue);
 	});
 	it('Should fail if you try to overwrite a namespace',function(){
 		try{
 
-			classFactory.setNamespaceDir('roor',__dirname);
+			oliveOil.setNamespaceDir('math',__dirname);
 			//Here to guarantee that we have a exception
 			expect(true).to.be.false;
 		}
@@ -124,8 +124,8 @@ describe('Factory methodes',function(){
 	it('Should fail if you try to load an unexistent class',function(){
 		try{
 
-			classFactory.getClass('unexistent.class');
-			//Here to guarantee that we have a exception
+			oliveOil.getClass('unexistent.class');
+			 //Here to guarantee that we have a exception
 			expect(true).to.be.false;
 		}
 		catch(err){
@@ -135,7 +135,7 @@ describe('Factory methodes',function(){
 	it('Should fail if you try to load an unexistent object',function(){
 		try{
 
-			classFactory.createObject('unexistent.class');
+			oliveOil.createObject('unexistent.class');
 			//Here to guarantee that we have a exception
 			expect(true).to.be.false;
 		}
@@ -146,24 +146,24 @@ describe('Factory methodes',function(){
 });
 
 describe('Object inheritance',function(){
-	var classFactory=null;
-	var ClassFactory=require(__dirname+'/../src/ClassFactory')();
+	var oliveOil=null;
+	var OliveOil=require(__dirname+'/../src/OliveOil')();
 
 	before(function(){
-		classFactory=new ClassFactory(exampleDir);
-		expect(classFactory.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
+		oliveOil=new OliveOil(exampleDir);
+		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
 	it('Should be able to create a object that inherits another loaded class',function(){
-		var load=classFactory.loadClass('Parent');
+		var load=oliveOil.loadClass('Parent');
 		expect(load).to.be.true;
-		var child=classFactory.createObject('Child','childName','surName');
+		var child=oliveOil.createObject('Child','childName','surName');
 		expect(child).to.exist;
 		expect(child.name).to.equal('childName');
 		expect(child.surName).to.equal('surName');
 
 	});
 	it('Should be able to create a grandChild  ',function(){
-		var grandChild=classFactory.createObject('GrandChild','grandChildName','surName','email@email.com');
+		var grandChild=oliveOil.createObject('GrandChild','grandChildName','surName','email@email.com');
 		expect(grandChild).to.exist;
 		expect(grandChild.name).to.equal('grandChildName');
 		expect(grandChild.surName).to.equal('surName');

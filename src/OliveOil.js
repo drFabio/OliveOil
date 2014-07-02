@@ -29,7 +29,7 @@ module.exports=function(){
  * It's serve as a common library for object,classes and paths lookup
  * @type {Object}
  */
-var classFactory={
+var oliveOil={
 
 	//A map of classes in which the namespace class name is the index and the class object the item
 	classMap:{
@@ -245,6 +245,6 @@ var classFactory={
 		this.noNamespaceDir=noNamespaceDir;
 	}
 };
-	return	Class.extend(classFactory);
+	return	Class.extend(oliveOil);
 }
 
