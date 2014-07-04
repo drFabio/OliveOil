@@ -225,6 +225,7 @@ var oliveOil={
 		return true;
 	},
 	normalizeDirectory:function(dir){
+
 		if(dir.lastIndexOf('/')!=(dir.length-1)){
 			dir+='/';
 		}
@@ -277,7 +278,10 @@ var oliveOil={
 		this.setNoNamespaceDir(noNamespaceDir);
 	},
 	setNoNamespaceDir:function(noNamespaceDir){
-		this.noNamespaceDir=this.normalizeDirectory(noNamespaceDir);
+		if(noNamespaceDir!==null){
+			noNamespaceDir=this.normalizeDirectory(noNamespaceDir);
+		}
+		this.noNamespaceDir=noNamespaceDir;
 	}
 };
 	return	Class.extend(oliveOil);
