@@ -39,6 +39,9 @@ describe('Factory methodes',function(){
 	it('Should be able to set a namespace directory',function(){
 		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
+	it('Should be able to set multiple namespace directory',function(){
+		expect(oliveOil.setMultipleNamespacesDir({'log':exampleDir+'modules/log','logic':exampleDir+'modules/logic'})).to.be.true;
+	});
 
 	it('Should be able to set a file path for a class',function(){
 		expect(oliveOil.setClassFile('Parent',exampleDir+'/Parent')).to.be.true;

@@ -205,8 +205,8 @@ var oliveOil={
 		return true;
 	},
 	setMultipleNamespacesDir:function(namespaceMap){
-		for(var name in namespaceDirMap){
-			this.setNamespaceDir(name,namespaceDirMap[name]);
+		for(var name in namespaceMap){
+			this.setNamespaceDir(name,namespaceMap[name]);
 		}
 		return true;
 	},
@@ -235,13 +235,16 @@ var oliveOil={
 		this.classFileMap[name]=file;
 		return true;
 	},
-	setObject:function(name,object){
+	setSingletonObject:function(name,object){
 		if(this.isObjectSet(name)){
 			throw new Error('The object '+name+' is already set');
 		}
 		this.objectMap[name]=object;
 	},
 	init:function(noNamespaceDir){
+		this.setNoNamespaceDir(noNamespaceDir);
+	},
+	setNoNamespaceDir:function(noNamespaceDir){
 		this.noNamespaceDir=noNamespaceDir;
 	}
 };
