@@ -102,15 +102,21 @@ var oliveOil={
 	getClassFile:function(name){
 		return this.classFileMap[name];
 	},
-	_getFile:function(path){
-		if(path.indexOf('.js')!=path.length-3){
-			path+='.js'
+	normalizeJsFile:function(name){
+		var index=name.lastIndexOf('.js');
+		if(index==-1 || index!=(name.length-4)){
+			name+='.js'
 		}
+		return name;
+	},
+	_getFile:function(path){
+		name=this.normalizeJsFile(path);
 		if(!fs.existsSync(path)){
 			throw new Error('the path '+path+' does not exists');
 		}
 		return require(path);
 	},
+
 	getClassFileContents:function(name){
 		if(!this.isClassFileSet(name)){
 			var namespaceAndName=this.getNamespaceAndNameFromPath(name);
@@ -137,7 +143,7 @@ var oliveOil={
 		if(this.isClassFileSet(fullName)){
 			throw new Error('The class '+className+' on the namespace '+namespace+' is already mapped');
 		}
-		var path=this.getNamespaceDir(namespace)+'/'+className;
+		var path=this.normalizeJsFile(this.getNamespaceDir(namespace)+className);
 		this.classFileMap[fullName]=path;
 		return true;
 	},
@@ -214,8 +220,34 @@ var oliveOil={
 		if(this.isNamespaceSet(name)){
 			throw new Error('The namespace '+name+' is already set');
 		}
+		dir=this.normalizeDirectory(dir);
 		this.namespaceDirMap[name]=dir;
 		return true;
+	},
+	normalizeDirectory:function(dir){
+		if(dir.lastIndexOf('/')!=(dir.length-1)){
+			dir+='/';
+		}
+		return dir;
+	},
+	classFileExists:function(name){
+		var namespaceAndName=this.getNamespaceAndNameFromPath(name);
+		var namespace=namespaceAndName['namespace'];
+		var className=namespaceAndName['className'];
+		if(!this.isNamespaceSet(namespace)){
+			return false;
+		}
+		var path;
+		if(namespace){
+			path=this.getNamespaceDir(namespace);
+		}
+		else{
+			path=this.noNamespaceDir;
+		}
+		var fileName=this.normalizeJsFile(className);
+
+		return fs.existsSync(path+fileName);
+
 	},
 	getNamespaceDir:function(name){
 
@@ -232,7 +264,7 @@ var oliveOil={
 		if(this.isClassFileSet(name)){
 			throw new Error('The class '+name+' is already set with a path');
 		}
-		this.classFileMap[name]=file;
+		this.classFileMap[name]=this.normalizeJsFile(file);
 		return true;
 	},
 	setSingletonObject:function(name,object){
@@ -245,7 +277,7 @@ var oliveOil={
 		this.setNoNamespaceDir(noNamespaceDir);
 	},
 	setNoNamespaceDir:function(noNamespaceDir){
-		this.noNamespaceDir=noNamespaceDir;
+		this.noNamespaceDir=this.normalizeDirectory(noNamespaceDir);
 	}
 };
 	return	Class.extend(oliveOil);

@@ -31,7 +31,7 @@ var expect=chai.expect;
 var should = chai.should();
 var OliveOil=require(__dirname+'/../src/OliveOil')();
 var exampleDir=__dirname+'/examples/';
-describe('Factory methodes',function(){
+describe('Factory methods',function(){
 	var oliveOil;
 	before(function(){
 		oliveOil=new OliveOil(exampleDir);
@@ -39,12 +39,17 @@ describe('Factory methodes',function(){
 	it('Should be able to set a namespace directory',function(){
 		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
+	it('Should be able to verify if a class file exists',function(){
+		expect(oliveOil.classFileExists('math.Sum')).to.be.true;
+		expect(oliveOil.classFileExists('math.NonExistent')).to.be.false;
+		
+	});
 	it('Should be able to set multiple namespace directory',function(){
 		expect(oliveOil.setMultipleNamespacesDir({'log':exampleDir+'modules/log','logic':exampleDir+'modules/logic'})).to.be.true;
 	});
 
 	it('Should be able to set a file path for a class',function(){
-		expect(oliveOil.setClassFile('Parent',exampleDir+'/Parent')).to.be.true;
+		expect(oliveOil.setClassFile('Parent',exampleDir+'Parent')).to.be.true;
 	});
 	it('Should be able to get a class file path',function(){
 		var path=oliveOil.getClassFile('Parent');
