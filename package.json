@@ -1,6 +1,6 @@
 {
   "name": "olive_oil",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A namespace handler,class factory and inheritance handler",
   "main": "index.js",
   "directories": {
