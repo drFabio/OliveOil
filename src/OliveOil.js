@@ -123,7 +123,7 @@ var oliveOil={
 			var namespace=namespaceAndName['namespace'];
 			var className=namespaceAndName['className'];
 			if(namespace && !this.isNamespaceSet(namespace)){
-				throw new Error('The namespace '+namespace+' is not set');
+				throw new Error('The namespace '+namespace+' is not set (trying to get '+name+')');
 			}
 			if(namespace){
 				this.setClassFileByNamespace(namespace,className);

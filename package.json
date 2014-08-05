@@ -19,8 +19,10 @@
     "Namespaces",
     "Inheritance"
   ],
+  "devDependencies": {
+     "chai":"*"
+  },
    "dependencies": {
-        "chai":"*",
         "class.extend":"*"
   },
   "author": "Fabio Oliveira Costa <fabio@dexus.com.br>",
