@@ -174,7 +174,7 @@ describe('Lazy Pojo handler',function(){
 		expect(obj.isTest).to.be.true;
 	});
 	it('Should remove the pojo from the list if the class was already generated',function(){
-		var ret=oliveOil._isClassPojoAlreadyCreated('pojoTest');
+		var ret=oliveOil.isClassPojoAlreadyCreated('pojoTest');
 		expect(ret).to.be.true;
 	});
 	it('Should be able to overwritte a set pojo object',function(){

@@ -71,7 +71,7 @@ var oliveOil={
 	loadClass:function(name){
 
 		var classPojo;
-		if(this._isClassPojoSet(name)){
+		if(this.isClassPojoSet(name)){
 			classPojo=this.getClassPojo(name);
 		}
 		else{
@@ -189,18 +189,18 @@ var oliveOil={
 		this.objectMap[name]=this.createObject.apply(this,arguments);
 		return this.objectMap[name];
 	},
-	_isClassPojoAlreadyCreated:function(name){
+	isClassPojoAlreadyCreated:function(name){
 		return this.classPojoMap[name]===false;
 	},
-	_isClassPojoSet:function(name){
-		return this._isClassPojoAlreadyCreated(name) || typeof(this.classPojoMap[name])!=='undefined';
+	isClassPojoSet:function(name){
+		return this.isClassPojoAlreadyCreated(name) || typeof(this.classPojoMap[name])!=='undefined';
 	},
 
 	setClassPojo:function(name,pojoData,overwrite){
-		if(this._isClassPojoAlreadyCreated(name)){
+		if(this.isClassPojoAlreadyCreated(name)){
 			throw new Error("The class "+name+" is already created and cannot have it's pojo changed");
 		}
-		if(!overwrite && this._isClassPojoSet(name)){
+		if(!overwrite && this.isClassPojoSet(name)){
 			throw new Error('Class pojo is already set, please pass a overwrride parameter if you want to reset it');
 		}
 		this.classPojoMap[name]=pojoData;
