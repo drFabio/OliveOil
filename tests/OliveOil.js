@@ -81,7 +81,7 @@ describe('Factory methods',function(){
 
 			}
 		};
-		var ret=oliveOil.setClassFromPojo('pojoClass',pojoData);
+		var ret=oliveOil.createClassFromPojo('pojoClass',pojoData);
 		expect(ret).to.be.true;
 		var obj=oliveOil.createObject('pojoClass');
 		expect(obj.foo).not.to.be.empty;
@@ -95,7 +95,7 @@ describe('Factory methods',function(){
 
 			}
 		};
-		var ret=oliveOil.setClassFromPojo('pojoNonSingletonClass',pojoData);
+		var ret=oliveOil.createClassFromPojo('pojoNonSingletonClass',pojoData);
 		var objA=oliveOil.createObject('pojoClass');
 		expect(objA.foo).to.equal('bar');
 		objA.foo='bar2';
@@ -105,7 +105,7 @@ describe('Factory methods',function(){
 	})
 	it('Should be able to get a previously set class',function(){
 		var operatorPOJO=oliveOil.getClassFileContents('math.AbstractOperator');
-		oliveOil.setClassFromPojo('math.AbstractOperator',operatorPOJO);
+		oliveOil.createClassFromPojo('math.AbstractOperator',operatorPOJO);
 		operatorClass=oliveOil.getClass('math.AbstractOperator');
 		expect(operatorClass).to.not.be.empty;
 
@@ -152,7 +152,81 @@ describe('Factory methods',function(){
 		}
 	});
 });
+describe('Lazy Pojo handler',function(){
+	var oliveOil=null;
+	var OliveOil=require(__dirname+'/../src/OliveOil')();
 
+	before(function(){
+		oliveOil=new OliveOil(exampleDir);
+		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
+	});
+	it('Should be able to set a class pojo for later use',function(){
+		var pojo={
+			'isTest':true,
+			init:function(){}
+		}
+		var ret=oliveOil.setClassPojo('pojoTest',pojo);
+		expect(ret).to.be.true;
+	});
+	it('Should be able to get a object from a class that the pojo was set',function(){
+		var obj=oliveOil.createObject('pojoTest');
+		expect(obj).to.exist;
+		expect(obj.isTest).to.be.true;
+	});
+	it('Should remove the pojo from the list if the class was already generated',function(){
+		var ret=oliveOil._isClassPojoAlreadyCreated('pojoTest');
+		expect(ret).to.be.true;
+	});
+	it('Should be able to overwritte a set pojo object',function(){
+		var otherPojo={
+			'anotherTest':true,
+			init:function(){}
+		}
+		var ret=oliveOil.setClassPojo('anotherPojoTest',otherPojo);
+		expect(ret).to.be.true;
+		var yetAnotherPojo={
+			'yetAnotherTest':true,
+			init:function(){}
+		};
+		var otherRet=oliveOil.setClassPojo('anotherPojoTest',yetAnotherPojo,true);
+		expect(otherRet).to.be.true;
+
+
+	});
+	it('Should not be able to overwritte a already generated pojo object',function(){
+		try{
+			var dumPojo={
+				init:function(){}
+			};
+			var otherRet=oliveOil.setClassPojo('anotherPojoTest',dumPojo,true);
+			expect(otherRet).to.not.exist;
+		}
+		catch(err){
+			expect(err).to.exist;
+		}
+	});
+	it('Should be able to get a parent from a set pojo that was not already created as a class',function(){
+		var parentPojo={
+			'iAmAParent':true,
+			init:function(){}
+		};
+		var ret=oliveOil.setClassPojo('parentPojo',parentPojo,true);
+		expect(ret).to.be.true;
+		var childPojo={
+			'iAmChild':true,
+			'parent':'parentPojo',
+			init:function(){}
+		};
+		var ret=oliveOil.setClassPojo('childPojo',childPojo,true);
+		expect(ret).to.be.true;
+		var obj=oliveOil.createObject('childPojo');
+		expect(obj.iAmAParent).to.be.true;
+		expect(obj.iAmChild).to.be.true;
+		
+	});
+
+
+});
 describe('Object inheritance',function(){
 	var oliveOil=null;
 	var OliveOil=require(__dirname+'/../src/OliveOil')();

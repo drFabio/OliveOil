@@ -47,6 +47,9 @@ var oliveOil={
 	namespaceDirMap:{
 
 	},
+	classPojoMap:{
+
+	},
 	noNamespaceDir:null,
 	/**
 	 * Get a class object from the given object
@@ -66,8 +69,15 @@ var oliveOil={
 		
 	},
 	loadClass:function(name){
-		var classPojo=this.getClassFileContents(name);
-		if(this.setClassFromPojo(name,classPojo)){
+
+		var classPojo;
+		if(this._isClassPojoSet(name)){
+			classPojo=this.getClassPojo(name);
+		}
+		else{
+			classPojo=this.getClassFileContents(name);
+		}
+		if(this.createClassFromPojo(name,classPojo)){
 			return true;
 		}
 		throw new Error('Was not able to load the class '+name+' on the path '+this.classFileMap[name]);
@@ -132,12 +142,8 @@ var oliveOil={
 				this.setClassFile(name,this.noNamespaceDir+name);
 			}
 		}
-	
-
 		return this._getFile(this.classFileMap[name]);
-
 	},
-	
 	setClassFileByNamespace:function(namespace,className){
 		var fullName=namespace+'.'+className;
 		if(this.isClassFileSet(fullName)){
@@ -183,20 +189,47 @@ var oliveOil={
 		this.objectMap[name]=this.createObject.apply(this,arguments);
 		return this.objectMap[name];
 	},
+	_isClassPojoAlreadyCreated:function(name){
+		return this.classPojoMap[name]===false;
+	},
+	_isClassPojoSet:function(name){
+		return this._isClassPojoAlreadyCreated(name) || typeof(this.classPojoMap[name])!=='undefined';
+	},
+
+	setClassPojo:function(name,pojoData,overwrite){
+		if(this._isClassPojoAlreadyCreated(name)){
+			throw new Error("The class "+name+" is already created and cannot have it's pojo changed");
+		}
+		if(!overwrite && this._isClassPojoSet(name)){
+			throw new Error('Class pojo is already set, please pass a overwrride parameter if you want to reset it');
+		}
+		this.classPojoMap[name]=pojoData;
+		return true;
+	},
+	getClassPojo:function(name){
+		return this.classPojoMap[name];
+	},
+	_setClassPojoAsUsed:function(name){
+		this.classPojoMap[name]=false;
+	},
 	/**
 	 * Sets a class on the given namespace to be the class object
 	 * @type {[type]}
 	 */
-	setClassFromPojo:function(name,pojoData){
+	createClassFromPojo:function(name,pojoData){
 		var ParentClass;
+		if(!pojoData){
+			pojoData=this.getClassPojo(name);
+		}
 		if(pojoData.parent){
 			ParentClass=this.getClass(pojoData.parent);
 		}
 		else{
 			ParentClass=Class;
 		}
-		return this.setClass(name,ParentClass.extend(pojoData));
-		
+		var ret= this.setClass(name,ParentClass.extend(pojoData));
+		this._setClassPojoAsUsed(name);
+		return ret;
 	},
 	
 	/**
