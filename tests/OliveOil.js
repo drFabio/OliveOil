@@ -39,13 +39,26 @@ describe('Factory methods',function(){
 	it('Should be able to set a namespace directory',function(){
 		expect(oliveOil.setNamespaceDir('math',exampleDir+'modules/math')).to.be.true;
 	});
+	it('Should be able to set a recursive namespace directory',function(done){
+		var setCb=function(err,data){
+			expect(err).to.not.exist;
+			expect(oliveOil.isNamespaceSet('logic')).to.be.true;
+			expect(oliveOil.isNamespaceSet('logic.boolean')).to.be.true;
+			expect(oliveOil.isNamespaceSet('logic.boolean.comparisons')).to.be.true;
+			expect(oliveOil.isNamespaceSet('logic.fuzzy')).to.be.true;
+			done();
+
+		}
+		oliveOil.setRecursiveNamespaceDir('logic',exampleDir+'modules/logic',setCb);
+
+	});
 	it('Should be able to verify if a class file exists',function(){
 		expect(oliveOil.classFileExists('math.Sum')).to.be.true;
 		expect(oliveOil.classFileExists('math.NonExistent')).to.be.false;
 		
 	});
 	it('Should be able to set multiple namespace directory',function(){
-		expect(oliveOil.setMultipleNamespacesDir({'log':exampleDir+'modules/log','logic':exampleDir+'modules/logic'})).to.be.true;
+		expect(oliveOil.setMultipleNamespacesDir({'log':exampleDir+'modules/log','text':exampleDir+'modules/text'})).to.be.true;
 	});
 
 	it('Should be able to set a file path for a class',function(){

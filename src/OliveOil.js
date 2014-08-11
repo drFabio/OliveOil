@@ -1,3 +1,4 @@
+var async=require('async');
 /*The MIT License (MIT)
 
 Copyright (c) 2014 Fabio Oliveira Costa
@@ -231,7 +232,7 @@ var oliveOil={
 		this._setClassPojoAsUsed(name);
 		return ret;
 	},
-	
+
 	/**
 	 * Sets a class on the given namespace to be the class object
 	 * @type {[type]}
@@ -249,13 +250,54 @@ var oliveOil={
 		}
 		return true;
 	},
+
 	setNamespaceDir:function(name,dir){
 		if(this.isNamespaceSet(name)){
 			throw new Error('The namespace '+name+' is already set');
+			return;
 		}
 		dir=this.normalizeDirectory(dir);
 		this.namespaceDirMap[name]=dir;
 		return true;
+	},
+	setRecursiveNamespaceDir:function(name,dir,cb){
+		if(this.isNamespaceSet(name)){
+			cb(new Error('The namespace '+name+' is already set'));
+			return;
+		}
+		dir=this.normalizeDirectory(dir);
+		this.namespaceDirMap[name]=dir;
+		this._walkDirectoryAndSetNamespace(name,dir,cb);
+	
+	},
+	_walkDirectoryAndSetNamespace:function(previousNamespaces,dir,cb){
+		var self=this;
+		var readDirCb=function(err,list){
+			if(err){
+				cb(err);
+				return;
+			}
+
+			var stat;
+			var funcsToSetNamespace=[];
+			list.forEach(function(item){
+				var newNamespace;
+				var path=dir+item;
+				stat=fs.statSync(path);
+				if(stat.isDirectory()){
+					newNamespace=self.buildNamespace(item,previousNamespaces);
+					funcsToSetNamespace.push(function(asynccb){
+						self.setRecursiveNamespaceDir(newNamespace,path,asynccb);
+					});
+				}
+			});
+			if(funcsToSetNamespace.length==0){
+				cb();
+				return;
+			}
+			async.series(funcsToSetNamespace,cb);
+		}
+		list=fs.readdir(dir,readDirCb);
 	},
 	normalizeDirectory:function(dir){
 
@@ -293,6 +335,12 @@ var oliveOil={
 	isClassFileSet:function(name){
 		return !!this.classFileMap[name];
 
+	},
+	buildNamespace:function(currentNamespace,previousNamespace){
+		if(previousNamespace){
+			return previousNamespace+'.'+currentNamespace;
+		}
+		return currentNamespace;
 	},
 	setClassFile:function(name,file){
 		if(this.isClassFileSet(name)){
