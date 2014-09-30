@@ -52,6 +52,9 @@ var oliveOil={
 	classPojoMap:{
 
 	},
+	createdPojoMap:{
+
+	},
 	noNamespaceDir:null,
 	/**
 	 * Get a class object from the given object
@@ -192,7 +195,7 @@ var oliveOil={
 		return this.objectMap[name];
 	},
 	isClassPojoAlreadyCreated:function(name){
-		return this.classPojoMap[name]===false;
+		return this.createdPojoMap[name];
 	},
 	isClassPojoSet:function(name){
 		return this.isClassPojoAlreadyCreated(name) || typeof(this.classPojoMap[name])!=='undefined';
@@ -212,7 +215,7 @@ var oliveOil={
 		return _.clone(this.classPojoMap[name]);
 	},
 	_setClassPojoAsUsed:function(name){
-		this.classPojoMap[name]=false;
+		this.createdPojoMap[name]=true;
 	},
 	/**
 	 * Sets a class on the given namespace to be the class object
