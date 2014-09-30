@@ -23,6 +23,7 @@ SOFTWARE.
 */
 var Class = require('class.extend');
 var util=require('util');
+var _=require('lodash');
 var fs=require('fs');
 module.exports=function(){
 	 /**
