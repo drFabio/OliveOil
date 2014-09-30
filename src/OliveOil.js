@@ -204,11 +204,11 @@ var oliveOil={
 		if(!overwrite && this.isClassPojoSet(name)){
 			throw new Error('Class pojo is already set, please pass a overwrride parameter if you want to reset it');
 		}
-		this.classPojoMap[name]=pojoData;
+		this.classPojoMap[name]=_.clone(pojoData);
 		return true;
 	},
 	getClassPojo:function(name){
-		return this.classPojoMap[name];
+		return _.clone(this.classPojoMap[name]);
 	},
 	_setClassPojoAsUsed:function(name){
 		this.classPojoMap[name]=false;

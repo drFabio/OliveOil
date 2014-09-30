@@ -24,7 +24,8 @@
   },
    "dependencies": {
         "class.extend":"*",
-        "async":"*"
+        "async":"*",
+        "lodash":"*"
   },
   "author": "Fabio Oliveira Costa <fabio@dexus.com.br>",
   "license": "MIT",

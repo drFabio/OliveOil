@@ -265,6 +265,8 @@ describe('Object inheritance',function(){
 		expect(grandChild.email).to.equal('email@email.com');
 
 	});
+	it('Should be able to call the parent contructor',function(done){
+	});
 	it('Should be able to load a parent even if the parent isn\'t  loaded yet',function(){
 
 	});
