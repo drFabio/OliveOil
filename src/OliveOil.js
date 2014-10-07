@@ -62,11 +62,8 @@ var oliveOil={
 	 * @return {[type]}           [description]
 	 */
 	getClass:function(name){
-		if(this.isClassSet(name)){
-			return this.classMap[name];
-		}
-		if(this.loadClass(name)){
-			return this.classMap[name];
+		if(this.isClassSet(name) || this.loadClass(name)){
+			return _.clone(this.classMap[name]);
 		}
 		else{
 			throw new Error('Was not able to load the class '+name);
@@ -96,7 +93,7 @@ var oliveOil={
 	createObject:function(name, var_args){
 		//Getting the var_args
 	    var params = Array.prototype.slice.call(arguments, 1);
-		if(!this.isClassSet(name)){
+		if(!this.isClassSet(name) && !this.isClassPojoSet(name)){
 			if(!this.loadClass(name)){
 				throw new Error('The class "'+name+'" is not set');
 			}
