@@ -73,12 +73,9 @@ var oliveOil={
 	loadClass:function(name){
 
 		var classPojo;
-		if(this.isClassPojoSet(name)){
-			classPojo=this.getClassPojo(name);
-		}
-		else{
-			classPojo=this.getClassFileContents(name);
-		}
+		
+		classPojo=this.getClassPojo(name);
+		
 		if(this.createClassFromPojo(name,classPojo)){
 			return true;
 		}
@@ -107,9 +104,6 @@ var oliveOil={
 			return result;
 		}
 		return object;
-		
-
-		
 	},
 	getClassFile:function(name){
 		return this.classFileMap[name];
@@ -209,7 +203,14 @@ var oliveOil={
 		return true;
 	},
 	getClassPojo:function(name){
-		return _.clone(this.classPojoMap[name]);
+		if(this.isClassPojoSet(name)){
+			return _.clone(this.classPojoMap[name]);
+		}
+		else{
+			var classPojo=this.getClassFileContents(name);
+			this.setClassPojo(name,classPojo);
+			return  _.clone(this.classPojoMap[name]);
+		}
 	},
 	_setClassPojoAsUsed:function(name){
 		this.createdPojoMap[name]=true;
@@ -224,7 +225,21 @@ var oliveOil={
 			pojoData=this.getClassPojo(name);
 		}
 		if(pojoData.parent){
-			ParentClass=this.getClass(pojoData.parent);
+			if(Array.isArray(pojoData.parent)){
+				var currentObj=Class;
+				var currentParent;
+				var self=this;
+				pojoData.parent.forEach(function(p){
+					
+					currentParent=self.getClass(p);
+					currentObj=currentObj.extend(currentParent.prototype)
+				});
+				ParentClass=currentObj;
+			}
+			else{
+
+				ParentClass=this.getClass(pojoData.parent);
+			}
 		}
 		else{
 			ParentClass=Class;

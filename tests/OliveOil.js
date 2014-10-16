@@ -265,5 +265,46 @@ describe('Object inheritance',function(){
 		expect(grandChild.email).to.equal('email@email.com');
 
 	});
-	it('Should be able to load a parent even if the parent isn\'t  loaded yet');
+	it('Should be able to load a parent even if the parent isn\'t  loaded yet',function(){
+		var parentPojo={
+			'a':1,
+			'b':2,
+			init:function(name){
+				this._name=name;
+			},
+			getName:function(){
+				return this._name;
+			}
+		}
+		var childPojo={
+			parent:'notLoadedParentPojo',
+			init:function(name){
+				this._super(name+'SUFIX')
+			}
+		}
+
+		var ret=oliveOil.setClassPojo('notLoadedParentPojo',parentPojo,true);
+		expect(ret).to.be.true;
+		var ret=oliveOil.setClassPojo('someChildPojo',childPojo,true);
+		expect(ret).to.be.true;
+
+		var obj=oliveOil.createObject('someChildPojo','name');
+		expect(obj).to.not.be.empty;
+		expect(obj.getName()).to.equal('nameSUFIX');
+	});
+	describe('multiple inheritance',function(){
+		var oliveOil=null;
+		var OliveOil=require(__dirname+'/../src/OliveOil')();
+		before(function(){
+			oliveOil=new OliveOil(exampleDir);
+			expect(oliveOil.setNamespaceDir('animals',exampleDir+'modules/animals')).to.be.true;
+		});
+		it('Should be able to inherit from multiple parents',function(){
+			var obj=oliveOil.createObject('animals.Dolphin');
+			expect(obj.canSwim()).to.be.true;
+			expect(obj.isAlive()).to.be.true;
+			expect(obj.drinkMilk()).to.be.true;
+			expect(obj.hasFur()).to.be.true;
+		});
+	})
 });
