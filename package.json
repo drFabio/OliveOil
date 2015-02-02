@@ -23,7 +23,7 @@
      "chai":"*"
   },
    "dependencies": {
-        "class.extend":"*",
+        "class.extend":"0.9.1",
         "async":"*",
         "lodash":"*"
   },
